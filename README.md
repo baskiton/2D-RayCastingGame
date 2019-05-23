@@ -17,7 +17,8 @@ The work of this program can be described in one screenshot:
 Mouse control may be incorrect, so I recommend using the arrow-keys.
 
 #### Install
-To install this mini-game, download the setup.exe file and perform the installation at any place on the disk.
+To install this mini-game, download the [setup.exe](https://github.com/baskiton/2D-RayCastingGame/releases/tag/1.0) 
+file and perform the installation at any place on the disk.
 
 To start the game, go to the directory with the installed program and run GAME.exe
 
