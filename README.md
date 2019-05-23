@@ -5,7 +5,7 @@ The work of this program can be described in one screenshot:
 
 ![img](screenshot.png)
 
-####Control with Mouse and Keyboard:
+#### Control with Mouse and Keyboard:
  * W, UpArrow - forward
  * S, DownArrow - backwards
  * A - left
@@ -16,7 +16,7 @@ The work of this program can be described in one screenshot:
 
 Mouse control may be incorrect, so I recommend using the arrow-keys.
 
-####Install
+#### Install
 To install this mini-game, download the setup.exe file and perform the installation at any place on the disk.
 
 To start the game, go to the directory with the installed program and run GAME.exe
