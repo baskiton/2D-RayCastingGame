@@ -1,6 +1,7 @@
 from math import (inf, cos, sin, tan, atan2, hypot, pi, tau, degrees,
                   radians, log2)
 from os import path
+from platform import system
 from tkinter import Tk, Canvas, NW, S, Label, messagebox
 
 from PIL import Image, ImageTk
@@ -18,6 +19,15 @@ def exit_diag():
         )
 
 
+def exit_warning():
+    a = messagebox.showwarning(
+        title='Error', message='Your system is not support. Exit.'
+    )
+    if a == 'ok':
+        close()
+        quit()
+
+
 def close():
     root.destroy()
     root.quit()
@@ -33,65 +43,56 @@ class KeyDetect:
         root.mainloop()
 
     def key(self):
-        if (self.pressed['w'] or self.pressed['up']) and self.pressed['a']:
+        if self.pressed['Forward'] and self.pressed['Turn Left']:
             player.move(2, -45)     # f-l
-        elif (self.pressed['w'] or self.pressed['up']) and self.pressed['d']:
+        elif self.pressed['Forward'] and self.pressed['Turn Right']:
             player.move(2, 45)      # f-r
-        elif (self.pressed['s'] or self.pressed['down']) and self.pressed['a']:
+        elif self.pressed['Backward'] and self.pressed['Turn Left']:
             player.move(-2, 45)     # b-l
-        elif (self.pressed['s'] or self.pressed['down']) and self.pressed['d']:
+        elif self.pressed['Backward'] and self.pressed['Turn Right']:
             player.move(-2, -45)    # b-r
-        elif self.pressed['w'] or self.pressed['up']:    # forward
+        elif self.pressed['Forward']:    # forward
             player.move(2, 0)
-        elif self.pressed['s'] or self.pressed['down']:    # backward
+        elif self.pressed['Backward']:    # backward
             player.move(-2, 0)
-        elif self.pressed['a']:    # turn left
+        elif self.pressed['Turn Left']:    # turn left
             player.move(-2, 90)
-        elif self.pressed['d']:    # turn right
+        elif self.pressed['Turn Right']:    # turn right
             player.move(2, 90)
-        if self.pressed['left']:    # rotate left
+        if self.pressed['Left']:    # rotate left
             player.rotate(-0.05)
-        elif self.pressed['right']:    # rotate right
+        elif self.pressed['Right']:    # rotate right
             player.rotate(0.05)
-        # render(column_calculate())
-        # player.show_marker()
+        draw()
         root.after(16, self.key)
 
     def _set_bindings(self):
-        for char in ['w', 's', 'a', 'd', 'up', 'down', 'left', 'right']:
+        for bind in key_set:
             root.bind('<KeyPress>', self._pressed)
             root.bind('<KeyRelease>', self._pressed)
             root.bind('<Motion>', self._mouse)
-            self.pressed[char] = False
+            self.pressed[bind] = False
 
     def _pressed(self, event):
-        # print(event.keysym)
-        key_sym = event.keysym.lower()
-        # print(key_sym)
+        keycode = event.keycode
+        # print(event.keysym, event.keysym_num)
         if str(event.type) == 'KeyRelease':
             modify = False
-        elif event.keysym == 'Escape':
-            exit_diag()
-            return
         else:
             modify = True
-            if key_sym == 'cyrillic_tse':
-                key_sym = 'w'
-            elif key_sym == 'cyrillic_ef':
-                key_sym = 'a'
-            elif key_sym == 'cyrillic_yeru':
-                key_sym = 's'
-            elif key_sym == 'cyrillic_ve':
-                key_sym = 'd'
-        if key_sym in self.pressed:
-            self.pressed[key_sym] = modify
+        for bind in key_set:
+            if keycode in key_set[bind]:
+                if bind == 'Escape':
+                    exit_diag()
+                    return
+                self.pressed[bind] = modify
 
     @staticmethod
     def _mouse(event):
         diff = event.x - (width >> 1)
         m_sens = 0.0017 * diff
         player.rotate(m_sens)
-        draw()
+        # draw()
         root.event_generate(
             '<Key>', warp=True, x=(width >> 1), y=(height >> 1)
         )
@@ -378,6 +379,18 @@ if __name__ == "__main__":
     root = Tk()
     root.title("2D Ray Casting")
     root.protocol('WM_DELETE_WINDOW', exit_diag)
+
+    if system() == "Windows":
+        key_code = [(87, 38), (83, 40), (65,), (68,), (37,), (39,), (27,)]
+    elif system() == "Linux":
+        key_code = [(25, 111), (39, 116), (38,), (40,), (113,), (114,), (9,)]
+    else:   # system() == "Darwin":
+        exit_warning()
+        key_code = []
+
+    key_keys = ('Forward', 'Backward', 'Turn Left', 'Turn Right',
+                'Left', 'Right', 'Escape')
+    key_set = dict(zip(key_keys, key_code))
 
     width = 640
     height = 400
